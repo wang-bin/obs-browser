@@ -52,8 +52,10 @@ void BrowserApp::OnRegisterCustomSchemes(CefRawPtr<CefSchemeRegistrar> registrar
 #elif CHROME_VERSION_BUILD >= 3029
 	registrar->AddCustomScheme("http", true, false, false, false, true,
 				   false);
-#else
+#elif CEF_VERSION_MAJOR >= 52 // not sure which version
 	registrar->AddCustomScheme("http", true, false, false, false, true);
+#else
+	registrar->AddCustomScheme("http", true, false, true);
 #endif
 }
 
@@ -105,7 +107,11 @@ void BrowserApp::OnContextCreated(CefRefPtr<CefBrowser> browser,
 {
 	CefRefPtr<CefV8Value> globalObj = context->GetGlobal();
 
+#if CHROME_VERSION_MAJOR < 52 // not sure which version
+    CefRefPtr<CefV8Value> obsStudioObj = CefV8Value::CreateObject(0);
+#else
 	CefRefPtr<CefV8Value> obsStudioObj = CefV8Value::CreateObject(0, 0);
+#endif
 	globalObj->SetValue("obsstudio", obsStudioObj,
 			    V8_PROPERTY_ATTRIBUTE_NONE);
 
@@ -291,7 +297,10 @@ bool BrowserApp::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
 
 		/* Create the CustomEvent object
 		 * We have to use eval to invoke the new operator */
-		context->Eval(script, browser->GetMainFrame()->GetURL(), 0,
+		context->Eval(script, 
+#if CEF_VERSION_MAJOR >= 52 // not sure which version
+          browser->GetMainFrame()->GetURL(), 0,
+#endif
 			      returnValue, exception);
 
 		CefV8ValueList arguments;
@@ -323,7 +332,10 @@ bool BrowserApp::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
 		CefRefPtr<CefV8Value> callback = callbackMap[callbackID];
 		CefV8ValueList args;
 
-		context->Eval(script, browser->GetMainFrame()->GetURL(), 0,
+		context->Eval(script,
+#if CEF_VERSION_MAJOR >= 52 // not sure which version
+          browser->GetMainFrame()->GetURL(), 0,
+#endif
 			      retval, exception);
 
 		args.push_back(retval);

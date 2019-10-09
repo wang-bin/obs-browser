@@ -56,3 +56,7 @@
 #else
 #pragma GCC diagnostic pop
 #endif
+
+#ifndef CEF_RAW_PTR_GET
+#define CefRawPtr CefRefPtr
+#endif
