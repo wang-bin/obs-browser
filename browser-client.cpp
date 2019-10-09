@@ -20,7 +20,9 @@
 #include "obs-browser-source.hpp"
 #include "base64/base64.hpp"
 #include "json11/json11.hpp"
+#if BROWSER_FRONTEND_API_SUPPORT_ENABLED
 #include <obs-frontend-api.h>
+#endif
 #include <obs.hpp>
 #include <util/platform.h>
 
@@ -106,29 +108,35 @@ bool BrowserClient::OnProcessMessageReceived(
 		return false;
 	}
 
-	if (name == "getCurrentScene") {
-		OBSSource current_scene = obs_frontend_get_current_scene();
-		obs_source_release(current_scene);
+    if (name == "getCurrentScene") {
+#if BROWSER_FRONTEND_API_SUPPORT_ENABLED
+      OBSSource current_scene = obs_frontend_get_current_scene();
+#else
+      OBSSource current_scene = bs->source;
+#endif
+      obs_source_release(current_scene);
+      if (!current_scene)
+        return false;
 
-		if (!current_scene)
-			return false;
+      const char* name = obs_source_get_name(current_scene);
+      if (!name)
+        return false;
 
-		const char *name = obs_source_get_name(current_scene);
-		if (!name)
-			return false;
-
-		json = Json::object{
-			{"name", name},
-			{"width", (int)obs_source_get_width(current_scene)},
-			{"height", (int)obs_source_get_height(current_scene)}};
-
-	} else if (name == "getStatus") {
+      json = Json::object{
+          {"name", name},
+          {"width", (int)obs_source_get_width(current_scene)},
+          {"height", (int)obs_source_get_height(current_scene)} };
+    }
+#if BROWSER_FRONTEND_API_SUPPORT_ENABLED
+	else if (name == "getStatus") {
 		json = Json::object{
 			{"recording", obs_frontend_recording_active()},
 			{"streaming", obs_frontend_streaming_active()},
 			{"replaybuffer", obs_frontend_replay_buffer_active()}};
 
-	} else {
+	}
+#endif
+    else {
 		return false;
 	}
 
