@@ -16,8 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "cef-headers.hpp"
-#include "browser-app.hpp"
+#include "../cef-headers.hpp"
+#include "../browser-app.hpp"
 
 #ifdef _WIN32
 #include <windows.h>

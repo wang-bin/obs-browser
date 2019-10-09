@@ -21,13 +21,13 @@
 #include "browser-scheme.hpp"
 #include "wide-string.hpp"
 #include <util/threading.h>
-#include <QApplication>
 #include <util/dstr.h>
 #include <functional>
 #include <thread>
 #include <mutex>
 
 #ifdef USE_QT_LOOP
+#include <QApplication>
 #include <QEventLoop>
 #include <QThread>
 #endif
@@ -449,8 +449,9 @@ void BrowserSource::Update(obs_data_t *settings)
 		restart = n_restart;
 		css = n_css;
 		url = n_url;
-
+#if LIBOBS_API_VER >= MAKE_SEMANTIC_VERSION(24, 0, 2)
 		obs_source_set_audio_active(source, reroute_audio);
+#endif
 	}
 
 	DestroyBrowser(true);
