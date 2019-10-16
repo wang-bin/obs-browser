@@ -52,7 +52,7 @@ void BrowserApp::OnRegisterCustomSchemes(CefRawPtr<CefSchemeRegistrar> registrar
 #elif CHROME_VERSION_BUILD >= 3029
 	registrar->AddCustomScheme("http", true, false, false, false, true,
 				   false);
-#elif CEF_VERSION_MAJOR >= 52 // not sure which version
+#elif CHROME_VERSION_MAJOR >= 52 // not sure which version
 	registrar->AddCustomScheme("http", true, false, false, false, true);
 #else
 	registrar->AddCustomScheme("http", true, false, true);
@@ -298,7 +298,7 @@ bool BrowserApp::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
 		/* Create the CustomEvent object
 		 * We have to use eval to invoke the new operator */
 		context->Eval(script, 
-#if CEF_VERSION_MAJOR >= 52 // not sure which version
+#if CHROME_VERSION_MAJOR >= 52 // not sure which version
           browser->GetMainFrame()->GetURL(), 0,
 #endif
 			      returnValue, exception);
@@ -333,7 +333,7 @@ bool BrowserApp::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
 		CefV8ValueList args;
 
 		context->Eval(script,
-#if CEF_VERSION_MAJOR >= 52 // not sure which version
+#if CHROME_VERSION_MAJOR >= 52 // not sure which version
           browser->GetMainFrame()->GetURL(), 0,
 #endif
 			      retval, exception);
