@@ -258,7 +258,9 @@ static void BrowserInit(void)
 	CefString(&settings.accept_language_list) = accepted_languages;
 	CefString(&settings.cache_path) = conf_path_abs;
 	CefString(&settings.browser_subprocess_path) = path;
-
+#if CHROME_VERSION_MAJOR < 62
+	settings.single_process = false;
+#endif
 	bool tex_sharing_avail = false;
 
 #if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
@@ -313,6 +315,7 @@ extern "C" EXPORT void obs_browser_initialize(void)
 #else
 		manager_thread = thread(BrowserManagerThread);
 #endif
+		os_event_wait(cef_started_event);
 	}
 }
 
