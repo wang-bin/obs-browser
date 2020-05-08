@@ -323,6 +323,7 @@ extern "C" EXPORT void obs_browser_initialize(void)
 #else
 		manager_thread = thread(BrowserManagerThread);
 #endif
+		os_event_wait(cef_started_event);
 	}
 }
 
